@@ -268,7 +268,7 @@ public class RequirementController {
     
     @GetMapping("/AiAnalysisReq")
     public void ai(@RequestParam String reqNo) throws Exception {
-
+    	
     }
 
 }
