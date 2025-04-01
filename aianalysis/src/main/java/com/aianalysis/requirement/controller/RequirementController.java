@@ -286,8 +286,8 @@ public class RequirementController {
 //        
 //        // **테스트용으로 강제 AWS Credentials 설정**
 //        BasicAWSCredentials awsCreds = new BasicAWSCredentials(
-//            "AKIA3TD2SWKLQA6GL7E7", 
-//            "K+29Drbhz9Z4w0aemXDq5zuthgwVjeFL0iaSJV85"
+//            "", 
+//            ""
 //        );
 //
 //        //4. AWS Recognition 클라이언트 생성
