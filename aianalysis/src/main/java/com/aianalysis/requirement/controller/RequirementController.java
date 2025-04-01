@@ -268,81 +268,81 @@ public class RequirementController {
     
     @GetMapping("/AiAnalysisReq")
     public void ai(@RequestParam String reqNo) throws Exception {
-        //1️. 요청 사항 불러오기
-        List<RequirementVO> requirementList = rs.selectRequirement(reqNo);
-        
-        if (requirementList.isEmpty()) {
-            //System.out.println("🚨 요청 사항을 찾을 수 없습니다: reqNo=" + reqNo);
-            return;
-        }
-
-        //2. 요청사항 가져오기
-        RequirementVO requirement = requirementList.get(0);
-        
-
-        //3. 파일 경로 설정
-        String fileTitle = filePath + "\\src\\main\\resources\\static\\uploads\\" + requirement.getFileTitle();
-
-        
-        // **테스트용으로 강제 AWS Credentials 설정**
-        BasicAWSCredentials awsCreds = new BasicAWSCredentials(
-            "AKIA3TD2SWKLQA6GL7E7", 
-            "K+29Drbhz9Z4w0aemXDq5zuthgwVjeFL0iaSJV85"
-        );
-
-        //4. AWS Recognition 클라이언트 생성
-        AmazonRekognition recognitionClient = AmazonRekognitionClientBuilder.standard()
-                .withRegion(Regions.AP_NORTHEAST_2)
-                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-                .build();
-
-        //5. 이미지 로드
-        ByteBuffer imageBytes;
-        try (InputStream inputStream = new FileInputStream(new File(fileTitle))) {
-            imageBytes = ByteBuffer.wrap(IOUtils.toByteArray(inputStream));
-        }
-        DetectLabelsRequest request = new DetectLabelsRequest()
-                .withImage(new Image().withBytes(imageBytes))
-                .withMaxLabels(10)
-                .withMinConfidence(77F);
-        try {
-            DetectLabelsResult result = recognitionClient.detectLabels(request);
-            List<Label> labels = result.getLabels();
-            int labelCount = labels.size(); // 레이블의 개수 파악
-            //System.out.println("감지된 레이블의 개수: " + labelCount);
-            String separator = "|";
-            StringBuilder insertResult = new StringBuilder(); // StringBuilder 사용
-
-            for (Label label : labels) {
-                //System.out.println(label.getName() + ": " + label.getConfidence().toString());
-                insertResult.append(label.getName()).append(": ").append(label.getConfidence().toString()).append(separator);
-            }
-            // 마지막 구분자 하나 삭제
-            if(insertResult.length() > 0) {
-            	insertResult.deleteCharAt(insertResult.length() - 1);
-            }
-            //6. 최종 결과를 문자열로 변환
-            String resultString = insertResult.toString();
-            
-            //7. 상태(status)를 "완료"로 변경
-            requirement.setStatus("분석완료");
-            rs.updateRequirement(requirement);
-            
-            // 8. 분석 결과가 있으면, 삭제 후 재등록
-            if(anlsRsltService.readAnalysisResultByReqNo(Integer.parseInt(reqNo)) != null) {
-            	anlsRsltService.deleteData(Integer.parseInt(reqNo)); 
-            }
-            
-            //9. 분석 결과 등록
-            AnalysisResultVO analysisResult = new AnalysisResultVO();
-            analysisResult.setReqNo(Integer.parseInt(reqNo));
-            analysisResult.setEmail(anlsRsltService.readEmailByReqNo(reqNo));
-            analysisResult.setAnlsRslt(resultString);
-            anlsRsltService.insertAnalysisResult(analysisResult);
-            
-        } catch (AmazonRekognitionException e) {
-            e.printStackTrace();
-        }
+//        //1️. 요청 사항 불러오기
+//        List<RequirementVO> requirementList = rs.selectRequirement(reqNo);
+//        
+//        if (requirementList.isEmpty()) {
+//            //System.out.println("🚨 요청 사항을 찾을 수 없습니다: reqNo=" + reqNo);
+//            return;
+//        }
+//
+//        //2. 요청사항 가져오기
+//        RequirementVO requirement = requirementList.get(0);
+//        
+//
+//        //3. 파일 경로 설정
+//        String fileTitle = filePath + "\\src\\main\\resources\\static\\uploads\\" + requirement.getFileTitle();
+//
+//        
+//        // **테스트용으로 강제 AWS Credentials 설정**
+//        BasicAWSCredentials awsCreds = new BasicAWSCredentials(
+//            "AKIA3TD2SWKLQA6GL7E7", 
+//            "K+29Drbhz9Z4w0aemXDq5zuthgwVjeFL0iaSJV85"
+//        );
+//
+//        //4. AWS Recognition 클라이언트 생성
+//        AmazonRekognition recognitionClient = AmazonRekognitionClientBuilder.standard()
+//                .withRegion(Regions.AP_NORTHEAST_2)
+//                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+//                .build();
+//
+//        //5. 이미지 로드
+//        ByteBuffer imageBytes;
+//        try (InputStream inputStream = new FileInputStream(new File(fileTitle))) {
+//            imageBytes = ByteBuffer.wrap(IOUtils.toByteArray(inputStream));
+//        }
+//        DetectLabelsRequest request = new DetectLabelsRequest()
+//                .withImage(new Image().withBytes(imageBytes))
+//                .withMaxLabels(10)
+//                .withMinConfidence(77F);
+//        try {
+//            DetectLabelsResult result = recognitionClient.detectLabels(request);
+//            List<Label> labels = result.getLabels();
+//            int labelCount = labels.size(); // 레이블의 개수 파악
+//            //System.out.println("감지된 레이블의 개수: " + labelCount);
+//            String separator = "|";
+//            StringBuilder insertResult = new StringBuilder(); // StringBuilder 사용
+//
+//            for (Label label : labels) {
+//                //System.out.println(label.getName() + ": " + label.getConfidence().toString());
+//                insertResult.append(label.getName()).append(": ").append(label.getConfidence().toString()).append(separator);
+//            }
+//            // 마지막 구분자 하나 삭제
+//            if(insertResult.length() > 0) {
+//            	insertResult.deleteCharAt(insertResult.length() - 1);
+//            }
+//            //6. 최종 결과를 문자열로 변환
+//            String resultString = insertResult.toString();
+//            
+//            //7. 상태(status)를 "완료"로 변경
+//            requirement.setStatus("분석완료");
+//            rs.updateRequirement(requirement);
+//            
+//            // 8. 분석 결과가 있으면, 삭제 후 재등록
+//            if(anlsRsltService.readAnalysisResultByReqNo(Integer.parseInt(reqNo)) != null) {
+//            	anlsRsltService.deleteData(Integer.parseInt(reqNo)); 
+//            }
+//            
+//            //9. 분석 결과 등록
+//            AnalysisResultVO analysisResult = new AnalysisResultVO();
+//            analysisResult.setReqNo(Integer.parseInt(reqNo));
+//            analysisResult.setEmail(anlsRsltService.readEmailByReqNo(reqNo));
+//            analysisResult.setAnlsRslt(resultString);
+//            anlsRsltService.insertAnalysisResult(analysisResult);
+//            
+//        } catch (AmazonRekognitionException e) {
+//            e.printStackTrace();
+//        }
     }
 
 }
