@@ -284,11 +284,6 @@ public class RequirementController {
 //        String fileTitle = filePath + "\\src\\main\\resources\\static\\uploads\\" + requirement.getFileTitle();
 //
 //        
-//        // **테스트용으로 강제 AWS Credentials 설정**
-//        BasicAWSCredentials awsCreds = new BasicAWSCredentials(
-//            "", 
-//            ""
-//        );
 //
 //        //4. AWS Recognition 클라이언트 생성
 //        AmazonRekognition recognitionClient = AmazonRekognitionClientBuilder.standard()
